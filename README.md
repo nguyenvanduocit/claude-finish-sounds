@@ -10,6 +10,18 @@ curl -fsSL https://raw.githubusercontent.com/nguyenvanduocit/claude-finish-sound
 
 Requires `jq`. Install with `brew install jq` if needed.
 
+## Uninstall
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/nguyenvanduocit/claude-finish-sounds/main/uninstall.sh | bash
+```
+
+## Reinstall / Update
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/nguyenvanduocit/claude-finish-sounds/main/install.sh | bash -s -- --force
+```
+
 ## Desktop Notifications (Optional)
 
 Install `terminal-notifier` to get notifications with click-to-focus:
