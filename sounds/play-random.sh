@@ -9,6 +9,16 @@ fi
 RANDOM_FILE="${FILES[$RANDOM % ${#FILES[@]}]}"
 afplay "$RANDOM_FILE" &
 
+INPUT=$(cat)
+
+PROJECT_NAME=""
+if command -v jq &> /dev/null && [ -n "$INPUT" ]; then
+    CWD=$(echo "$INPUT" | jq -r '.cwd // empty')
+    if [ -n "$CWD" ]; then
+        PROJECT_NAME=$(basename "$CWD")
+    fi
+fi
+
 get_terminal_bundle_id() {
     case "$TERM_PROGRAM" in
         "Apple_Terminal") echo "com.apple.Terminal" ;;
@@ -25,8 +35,14 @@ get_terminal_bundle_id() {
 if command -v terminal-notifier &> /dev/null; then
     BUNDLE_ID=$(get_terminal_bundle_id)
 
+    if [ -n "$PROJECT_NAME" ]; then
+        TITLE="Claude · $PROJECT_NAME"
+    else
+        TITLE="Claude"
+    fi
+
     NOTIFY_ARGS=(
-        -title "Claude"
+        -title "$TITLE"
         -message "Task completed!"
         -sound ""
     )
