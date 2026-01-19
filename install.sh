@@ -51,3 +51,9 @@ fi
 
 echo ""
 echo "Done! Claude will now play anime sounds when finishing tasks."
+
+if ! command -v terminal-notifier &> /dev/null; then
+    echo ""
+    echo "Optional: Install terminal-notifier for desktop notifications:"
+    echo "  brew install terminal-notifier"
+fi
