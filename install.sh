@@ -8,6 +8,9 @@ SOUNDS_DIR="$HOME/.claude/sounds"
 SETTINGS_FILE="$HOME/.claude/settings.json"
 HOOK_COMMAND="\$HOME/.claude/sounds/play-random.sh"
 
+FORCE=false
+[ "$1" = "--force" ] && FORCE=true
+
 check_installed() {
     if [ -f "$SOUNDS_DIR/play-random.sh" ] && [ -f "$SETTINGS_FILE" ]; then
         if jq -e --arg cmd "$HOOK_COMMAND" '.hooks.Stop[]?.hooks[]? | select(.command == $cmd)' "$SETTINGS_FILE" > /dev/null 2>&1; then
@@ -22,7 +25,7 @@ if ! command -v jq &> /dev/null; then
     exit 1
 fi
 
-if check_installed; then
+if [ "$FORCE" = false ] && check_installed; then
     echo "Claude finish sounds is already installed."
     echo ""
     echo "To reinstall: curl -fsSL $BASE_URL/install.sh | bash -s -- --force"
@@ -30,7 +33,7 @@ if check_installed; then
     exit 0
 fi
 
-if [ "$1" = "--force" ]; then
+if [ "$FORCE" = true ]; then
     echo "Reinstalling Claude finish sounds..."
 else
     echo "Installing Claude finish sounds..."
