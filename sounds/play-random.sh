@@ -12,10 +12,22 @@ afplay "$RANDOM_FILE" &
 INPUT=$(cat)
 
 PROJECT_NAME=""
+SESSION_TITLE=""
+
 if command -v jq &> /dev/null && [ -n "$INPUT" ]; then
     CWD=$(echo "$INPUT" | jq -r '.cwd // empty')
+    TRANSCRIPT=$(echo "$INPUT" | jq -r '.transcript_path // empty')
+
     if [ -n "$CWD" ]; then
         PROJECT_NAME=$(basename "$CWD")
+    fi
+
+    if [ -n "$TRANSCRIPT" ] && [ -f "$TRANSCRIPT" ]; then
+        FIRST_MSG=$(grep -m1 '"type":"user"' "$TRANSCRIPT" 2>/dev/null | jq -r '.content // empty' 2>/dev/null | head -c 50)
+        if [ -n "$FIRST_MSG" ]; then
+            SESSION_TITLE="$FIRST_MSG"
+            [ ${#FIRST_MSG} -ge 50 ] && SESSION_TITLE="${SESSION_TITLE}..."
+        fi
     fi
 fi
 
@@ -41,9 +53,15 @@ if command -v terminal-notifier &> /dev/null; then
         TITLE="Claude"
     fi
 
+    if [ -n "$SESSION_TITLE" ]; then
+        MESSAGE="$SESSION_TITLE"
+    else
+        MESSAGE="Task completed!"
+    fi
+
     NOTIFY_ARGS=(
         -title "$TITLE"
-        -message "Task completed!"
+        -message "$MESSAGE"
         -sound ""
     )
 
